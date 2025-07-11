@@ -1,75 +1,98 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+// In your main screen (index.tsx), replace the navigation logic with:
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import { setGlobalPhotos } from './processing'; // Import the global state function
 
-export default function HomeScreen() {
+const processPhotos = async () => {
+  if (photos.length === 0) {
+    Alert.alert('No Photos', 'Please capture or select some photos first');
+    return;
+  }
+
+  // Instead of passing photos through URL params, use global state
+  setGlobalPhotos(photos);
+  
+  // Navigate to processing screen without params
+  router.push('/processing');
+};
+
+// Alternative Solution 1: Using React Context (Recommended)
+// Create a context file (PhotoContext.js):
+
+import React, { createContext, useContext, useState } from 'react';
+
+const PhotoContext = createContext();
+
+export const PhotoProvider = ({ children }) => {
+  const [photos, setPhotos] = useState([]);
+  const [processingResults, setProcessingResults] = useState([]);
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <PhotoContext.Provider value={{
+      photos,
+      setPhotos,
+      processingResults,
+      setProcessingResults
+    }}>
+      {children}
+    </PhotoContext.Provider>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
+export const usePhotoContext = () => {
+  const context = useContext(PhotoContext);
+  if (!context) {
+    throw new Error('usePhotoContext must be used within a PhotoProvider');
+  }
+  return context;
+};
+
+// Alternative Solution 2: Using Expo Router with state
+// In your main screen, you can also use router.push with state:
+
+const processPhotos = async () => {
+  if (photos.length === 0) {
+    Alert.alert('No Photos', 'Please capture or select some photos first');
+    return;
+  }
+
+  // Use router.push with state instead of params
+  router.push({
+    pathname: '/processing',
+    // Don't pass large data through params
+  });
+};
+
+// Alternative Solution 3: Using AsyncStorage for persistence
+// If you want to persist the photos:
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const processPhotos = async () => {
+  if (photos.length === 0) {
+    Alert.alert('No Photos', 'Please capture or select some photos first');
+    return;
+  }
+
+  try {
+    // Save photos to AsyncStorage
+    await AsyncStorage.setItem('photos_to_process', JSON.stringify(photos));
+    
+    // Navigate to processing screen
+    router.push('/processing');
+  } catch (error) {
+    console.error('Error saving photos:', error);
+    Alert.alert('Error', 'Failed to save photos for processing');
+  }
+};
+
+// Then in ProcessingScreen, retrieve from AsyncStorage:
+// const retrievePhotos = async () => {
+//   try {
+//     const storedPhotos = await AsyncStorage.getItem('photos_to_process');
+//     if (storedPhotos) {
+//       setPhotos(JSON.parse(storedPhotos));
+//     }
+//   } catch (error) {
+//     console.error('Error retrieving photos:', error);
+//   }
+// };
