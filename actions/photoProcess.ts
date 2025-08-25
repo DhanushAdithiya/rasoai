@@ -1,7 +1,13 @@
 // @/actions/photoProcess.js
+import Config from 'react-native-config';
+
 export const processPhoto = async (capturedPhotos) => {
   try {
     console.log(`Starting to process ${capturedPhotos.length} photos...`);
+    
+    // Get server configuration from environment variables
+    const serverUrl = `${Config.SERVER_URL}/predict/`;
+    console.log(`Using server URL: ${serverUrl}`);
     
     // Process each photo one by one
     for (let i = 0; i < capturedPhotos.length; i++) {
@@ -11,8 +17,6 @@ export const processPhoto = async (capturedPhotos) => {
       
       try {
         // Create FormData for the photo
-        
-        // Convert photo to blob/file format
         const formData = new FormData();
         formData.append('file', {
             uri: photo.uri,
@@ -20,8 +24,6 @@ export const processPhoto = async (capturedPhotos) => {
             type: 'image/jpeg',
         });
         
-        // Use your Ubuntu machine's actual IP address
-        const serverUrl = 'http://192.168.0.106:8000/predict/';
         console.log(`Sending request to: ${serverUrl}`);
         
         const serverResponse = await fetch(serverUrl, {
@@ -79,7 +81,7 @@ export const processPhoto = async (capturedPhotos) => {
       
       // Add a small delay between requests to avoid overwhelming the server
       if (i < capturedPhotos.length - 1) {
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Increased delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
       }
     }
     
@@ -88,4 +90,4 @@ export const processPhoto = async (capturedPhotos) => {
   } catch (error) {
     console.error('Error in processPhoto function:', error);
   }
-};
+}
