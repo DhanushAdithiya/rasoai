@@ -17,7 +17,7 @@ import {
   View,
 } from 'react-native';
 
-const server = "http://10.238.248.72:8000/"
+import { server } from '@/actions/accounts';
 
 export default function InventoryPage() {
   const [inventoryItems, setInventoryItems] = useState([]);

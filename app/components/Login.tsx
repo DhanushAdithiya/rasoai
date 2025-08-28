@@ -13,8 +13,12 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import Config from 'react-native-config'; // https://api.example.com
+
 
 import { login } from '@/actions/accounts';
+
+const apiUrl = Config.SERVER_URL;
 
 interface LoginProps {
   onLoginSuccess: (userId: string) => void; // ✅ Updated to expect userId parameter
@@ -26,6 +30,7 @@ export default function Login({ onLoginSuccess, onNavigateToSignup }: LoginProps
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  console.log(Config)
 
   const handleLogin = async () => {
     if (!email.trim() || !password.trim()) {

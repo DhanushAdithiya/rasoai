@@ -19,7 +19,8 @@ import {
 
 
 // API configuration
-const API_BASE_URL = "http://10.238.248.72:8000/"  
+import { server as API_BASE_URL } from '@/actions/accounts';
+
 
 // Global state for photos (alternative to URL params)
 let globalPhotos = [];

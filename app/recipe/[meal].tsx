@@ -4,6 +4,8 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+import { server } from '@/actions/accounts';
+
 interface Recipe {
   recipe_name: string;
   prep_time: string;
@@ -12,8 +14,6 @@ interface Recipe {
   mealType: string;
   emoji: string;
 }
-
-const server = "http://10.238.248.72:8000/"
 
 export default function RecipeScreen() {
   const { meal } = useLocalSearchParams();

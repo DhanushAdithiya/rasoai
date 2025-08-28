@@ -1,4 +1,4 @@
-import { fetchUser } from '@/actions/accounts';
+import { fetchUser, server } from '@/actions/accounts';
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CameraView, useCameraPermissions } from 'expo-camera';
@@ -7,7 +7,8 @@ import { useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, Dimensions, Image, Platform, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import AuthManager from './components/AuthManager';
-import { setGlobalPhotos } from './ProcessingScreen'; // Import the global photos setter
+import { setGlobalPhotos } from './ProcessingScreen';
+
 
 
   Notifications.setNotificationHandler({
@@ -17,9 +18,6 @@ import { setGlobalPhotos } from './ProcessingScreen'; // Import the global photo
     shouldSetBadge: false,
   }),
 });
-
-const server = "http://10.238.248.72:8000/"
-
 
 export default function App() {
   const [permission, requestPermission] = useCameraPermissions();

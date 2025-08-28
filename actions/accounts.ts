@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const server = `http://10.238.248.72:8000/`
+export const server = `http://10.238.248.72:8000/`
 
 // Types for better type safety
 interface LoginResponse {
